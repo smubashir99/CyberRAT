@@ -1,0 +1,80 @@
+# ================================================================
+# CyberRAT v2 — .gitignore
+# Dissertation: Securing Irish SMEs — AI-CRAF Framework
+# Author: Syed Mubashir Ahmed Hashmi (20089221) — DBS Dublin
+# ================================================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+
+# ---- Virtual environments ----
+.env
+.venv/
+env/
+venv/
+ENV/
+.python-version
+
+# ---- Flask / SQLAlchemy ----
+instance/
+*.db
+*.sqlite3
+
+# ---- Secrets (NEVER commit these) ----
+.env.local
+.env.production
+secrets.py
+*.pem
+*.key
+*.crt
+
+# ---- Node / React ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+build/
+frontend/build/
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# ---- OS files ----
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ---- Test / coverage ----
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+*.cover
+.pytest_cache/
+
+# ---- Logs ----
+*.log
+logs/
