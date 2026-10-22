@@ -1,5 +1,5 @@
 # ================================================================
-# CyberRAT v2 — Python Dependencies
+# CyberRAT — Python Dependencies
 # Author: Syed Mubashir Ahmed Hashmi (20089221) — DBS Dublin
 # ================================================================
 
