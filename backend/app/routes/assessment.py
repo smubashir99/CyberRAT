@@ -2,7 +2,7 @@
 CyberRAT v2 — Assessment Routes
 ==================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : AI-CRAF Dissertation — DBS Dublin
+Project : CRAF Dissertation — DBS Dublin
 Purpose : Submit, list, and delete cybersecurity assessments.
 
 Endpoints:
