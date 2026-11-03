@@ -2,7 +2,7 @@
 CyberRAT v2 — Application Configuration
 =========================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : AI-CRAF Dissertation — DBS Dublin
+Project : CRAF Dissertation — DBS Dublin
 Purpose : Centralised configuration for all environments.
 
 Security notes:
