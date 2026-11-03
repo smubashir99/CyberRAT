@@ -33,20 +33,20 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
-# Flask-Mail is optional; if not installed, OTP emails will not be sent
+
 from app.extensions import db, limiter, mail
 from app.models.user import User, Role
 from app.models.otp import OTPCode
 from app.models.audit_log import AuditAction
 from app.middleware.rbac import require_admin, get_current_user
 from app.services.audit import log_event
-# Optional import for Flask-Mail
+
 try:
     from flask_mail import Message as MailMessage
     MAIL_AVAILABLE = True
 except ImportError:
     MAIL_AVAILABLE = False
-# Optional import for bcrypt (used in User model)
+
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
@@ -54,7 +54,7 @@ bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 # Password validation helper
 # ─────────────────────────────────────────────────────────────
 _SPECIAL = set(r"""!@#$%^&*()_+-=[]{}|;':",.<>?/`~\\""")
-# Validate password complexity rules
+
 def validate_password(password: str) -> tuple:
     """
     Enforce password complexity rules.
@@ -62,7 +62,6 @@ def validate_password(password: str) -> tuple:
     Returns:
         (is_valid: bool, error_message: str)
     """
-    # Check length
     if len(password) < 8:
         return False, "Password must be at least 8 characters long."
     if not re.search(r"[A-Z]", password):
@@ -90,16 +89,15 @@ def _send_otp_email(user: User, otp_code: str) -> bool:
     Returns True if email sent (or debug mode active), False on error.
     """
     debug_mode = current_app.config.get("MAIL_DEBUG_MODE", True)
-    #  In debug mode, just log to console and return True
+
     if debug_mode:
         # In demo/dev mode — just log to console; API returns code in body
         print(f"[CyberRAT OTP] User: {user.email}  Code: {otp_code}  (debug mode)")
         return True
-    
-    #  If Flask-Mail is not installed, we cannot send emails
+
     if not MAIL_AVAILABLE:
         return False
-    #   Send the email using Flask-Mail
+
     try:
         msg = MailMessage(
             subject     = "CyberRAT — Your Login Verification Code",
@@ -154,7 +152,6 @@ def signup():
           "role":       "analyst"   (optional: "analyst" or "viewer". Default: analyst)
         }
     """
-    #---- Parse JSON body ----
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Bad Request", "message": "JSON body required."}), 400
@@ -215,12 +212,11 @@ def signup():
         last_name  = last_name,
         role       = role,
     )
-    #  Set password hash using bcrypt
     user.set_password(password)
-    # Add to DB and commit
+
     db.session.add(user)
     db.session.commit()
-    # Log the self-registration event
+
     log_event(
         action      = AuditAction.REGISTER,
         description = f"Self-registration: '{email}' signed up with role '{role}'.",
@@ -230,7 +226,7 @@ def signup():
         resource_id   = user.id,
         resource_type = "user",
     )
-    # Return success response with user info (excluding password hash)
+
     return jsonify({
         "message": f"Account created successfully. You can now log in.",
         "user":    user.to_dict(),
@@ -277,9 +273,9 @@ def login():
 
     # Generic failure message — do NOT reveal whether email exists
     FAIL_MSG = "Invalid email address or password."
-    # Check if user exists
+
     user = User.query.filter_by(email=email).first()
-    # If user not found, log failed attempt and return generic error
+
     if not user:
         log_event(
             action      = AuditAction.LOGIN_FAILED,
@@ -287,12 +283,10 @@ def login():
             user_email  = email,
             status_code = 401,
         )
-        #  Return generic error to prevent email enumeration
         return jsonify({"error": "Unauthorized", "message": FAIL_MSG}), 401
 
     # ---- Check account lockout ----
     LOCKOUT_MINUTES = 30
-    # If user is locked, check if lockout period has expired
     if user.locked_at:
         unlock_time = user.locked_at + timedelta(minutes=LOCKOUT_MINUTES)
         if datetime.utcnow() < unlock_time:
@@ -304,7 +298,6 @@ def login():
                 user_email  = email,
                 status_code = 423,
             )
-            #  Return 423 Locked with remaining time
             return jsonify({
                 "error":   "Account Locked",
                 "message": f"Your account is temporarily locked due to too many failed login attempts. "
@@ -318,8 +311,7 @@ def login():
             user.failed_logins = 0
             user.is_active    = True
             db.session.commit()
-    
-    # --- Check if account is active (not deactivated) ---
+
     if not user.is_active:
         log_event(
             action      = AuditAction.LOGIN_FAILED,
@@ -327,7 +319,6 @@ def login():
             user_email  = email,
             status_code = 401,
         )
-        #  Return generic error to prevent revealing account status
         return jsonify({"error": "Unauthorized", "message": FAIL_MSG}), 401
 
     # ---- Check password ----
@@ -337,7 +328,7 @@ def login():
             user.locked_at = datetime.utcnow()
             user.is_active = False
         db.session.commit()
-        # Log the failed login attempt with details
+
         log_event(
             action      = AuditAction.LOGIN_FAILED,
             description = f"Invalid password for '{email}'. Attempts: {user.failed_logins}.",
@@ -350,9 +341,9 @@ def login():
     # ---- Password OK → generate OTP ----
     _, otp_plaintext = OTPCode.create_for_user(user.id)
     email_sent       = _send_otp_email(user, otp_plaintext)
-    # In debug mode, the OTP is not actually emailed, but returned in the response for testing
+
     debug_mode = current_app.config.get("MAIL_DEBUG_MODE", True)
-    # Log the OTP sent event
+
     log_event(
         action      = "OTP_SENT",
         description = f"OTP sent for '{email}' (debug={debug_mode}, sent={email_sent}).",
@@ -360,7 +351,7 @@ def login():
         user_email  = email,
         status_code = 200,
     )
-    # Return response indicating OTP is required
+
     response = {
         "message":      "OTP sent to your email. Enter the 6-digit code to continue.",
         "otp_required": True,
@@ -370,7 +361,7 @@ def login():
     if debug_mode:
         response["debug_otp"] = otp_plaintext
         response["debug_note"] = "DEVELOPMENT MODE — OTP returned in response (not emailed)."
-    #  Return 200 OK with the response
+
     return jsonify(response), 200
 
 
@@ -394,20 +385,19 @@ def verify_otp():
           "user": { ... }
         }
     """
-    # Parse JSON body
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Bad Request", "message": "JSON body required."}), 400
-    # Validate required fields
+
     user_id  = data.get("user_id")
     otp_code = str(data.get("otp", "")).strip()
-    
+
     if not user_id or not otp_code:
         return jsonify({
             "error": "Validation Error",
             "message": "Both 'user_id' and 'otp' are required."
         }), 422
-    #  --- Fetch user and check active status ---
+
     user = User.query.get(user_id)
     if not user or not user.is_active:
         return jsonify({"error": "Unauthorized", "message": "Invalid session."}), 401
@@ -430,12 +420,10 @@ def verify_otp():
     user.failed_logins = 0
     user.last_login    = datetime.utcnow()
     db.session.commit()
-    
-    #--- Create JWT access and refresh tokens ---
+
     access_token  = create_access_token(identity=user.email)
     refresh_token = create_refresh_token(identity=user.email)
 
-    #  Log successful login event
     log_event(
         action      = AuditAction.LOGIN_SUCCESS,
         description = f"User '{user.email}' authenticated (OTP verified).",
@@ -524,10 +512,9 @@ def update_profile():
         if len(last_name) > 100:
             return jsonify({"error": "Bad Request", "message": "last_name must be ≤ 100 characters."}), 400
         user.last_name = last_name
-    
-    # Commit changes to the database
+
     db.session.commit()
-    # Log the profile update event
+
     log_event(
         action      = AuditAction.USER_UPDATE,
         description = f"User '{user.email}' updated their profile name.",
@@ -535,7 +522,7 @@ def update_profile():
         user_email  = user.email,
         status_code = 200,
     )
-    # Return the updated user profile
+
     return jsonify({"user": user.to_dict(), "message": "Profile updated successfully."}), 200
 
 
@@ -562,7 +549,7 @@ def change_password():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not Found", "message": "User not found."}), 404
-    # Parse JSON body
+
     data = request.get_json(silent=True) or {}
 
     current_pw  = data.get("current_password", "")
@@ -588,11 +575,10 @@ def change_password():
     # Cannot reuse current password
     if user.check_password(new_pw):
         return jsonify({"error": "Bad Request", "message": "New password must be different from the current password."}), 400
-    
-    # Update password hash and commit
+
     user.set_password(new_pw)
     db.session.commit()
-    # Log the password change event
+
     log_event(
         action      = AuditAction.PASSWORD_CHANGED,
         description = f"User '{user.email}' changed their password.",
@@ -600,7 +586,7 @@ def change_password():
         user_email  = user.email,
         status_code = 200,
     )
-    # Return success message
+
     return jsonify({"message": "Password changed successfully."}), 200
 
 
@@ -646,8 +632,7 @@ def register():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Bad Request", "message": "JSON body required."}), 400
-    
-    #--- Validate required fields ---
+
     for field in ["email", "password", "first_name", "last_name"]:
         if not str(data.get(field, "")).strip():
             return jsonify({
@@ -660,7 +645,7 @@ def register():
     first_name = data["first_name"].strip()
     last_name  = data["last_name"].strip()
     role       = data.get("role", Role.ANALYST).strip().lower()
-    #--- Validate role ---
+
     if role not in Role.ALL:
         return jsonify({
             "error": "Validation Error",
@@ -687,7 +672,7 @@ def register():
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    # Log the admin-created user event
+
     admin = get_current_user()
     log_event(
         action      = AuditAction.REGISTER,
@@ -748,13 +733,10 @@ def update_user(user_id: int):
     data  = request.get_json(silent=True) or {}
     user  = User.query.get(user_id)
     admin = get_current_user()
-    
-    
-    # Check if user exists
+
     if not user:
         return jsonify({"error": "Not Found", "message": "User not found."}), 404
-    
-    # Prevent admin from changing their own role to non-admin
+
     if user.id == admin.id and data.get("role") and data["role"] != Role.ADMIN:
         return jsonify({
             "error": "Forbidden",
@@ -762,8 +744,7 @@ def update_user(user_id: int):
         }), 403
 
     changes = []
-    
-    # Update role if provided
+
     if "role" in data:
         new_role = data["role"].strip().lower()
         if new_role not in Role.ALL:
@@ -783,7 +764,7 @@ def update_user(user_id: int):
                 resource_id   = user.id,
                 resource_type = "user",
             )
-    # Update is_active if provided
+
     if "is_active" in data:
         new_status = bool(data["is_active"])
         if user.is_active != new_status:
@@ -799,7 +780,7 @@ def update_user(user_id: int):
                     resource_id   = user.id,
                     resource_type = "user",
                 )
-    # Commit changes if any
+
     if changes:
         db.session.commit()
 
@@ -876,7 +857,7 @@ def forgot_password():
     """
     data  = request.get_json(silent=True) or {}
     email = data.get("email", "").strip().lower()
-    # Validate email presence
+
     if not email:
         return jsonify({"error": "Validation Error", "message": "Email is required."}), 422
 
@@ -898,7 +879,8 @@ def forgot_password():
     db.session.commit()
 
     debug_mode  = current_app.config.get("MAIL_DEBUG_MODE", True)
-    reset_url   = f"http://localhost:3000/reset-password?token={token_plain}&email={email}"
+    frontend    = current_app.config.get("FRONTEND_URL", "http://localhost:3000")
+    reset_url   = f"{frontend}/reset-password?token={token_plain}&email={email}"
 
     if not debug_mode and MAIL_AVAILABLE:
         try:
@@ -937,7 +919,7 @@ def forgot_password():
         user_email  = email,
         status_code = 200,
     )
-    # Return generic success response (200 OK) regardless of email existence
+
     response = dict(GENERIC_OK)
     if debug_mode:
         response["debug_reset_url"]  = reset_url
@@ -959,19 +941,18 @@ def reset_password():
     Request body:
         { "email": "user@example.com", "token": "<reset_token>", "new_password": "..." }
     """
-    import hashlib
+    import hashlib, hmac
     data         = request.get_json(silent=True) or {}
     email        = data.get("email", "").strip().lower()
     token_plain  = data.get("token", "").strip()
     new_password = data.get("new_password", "")
 
-    # Validate required fields
     if not email or not token_plain or not new_password:
         return jsonify({
             "error": "Validation Error",
             "message": "email, token, and new_password are all required."
         }), 422
-    # Validate email format
+
     INVALID_MSG = "This reset link is invalid or has expired. Please request a new one."
 
     user = User.query.filter_by(email=email).first()
@@ -987,7 +968,7 @@ def reset_password():
 
     # Constant-time comparison via hash
     token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
-    if token_hash != user.reset_token:
+    if not hmac.compare_digest(token_hash, user.reset_token):
         return jsonify({"error": "Bad Request", "message": INVALID_MSG}), 400
 
     # Validate new password complexity
@@ -1010,5 +991,5 @@ def reset_password():
         user_email  = email,
         status_code = 200,
     )
-    # Return success message
+
     return jsonify({"message": "Password reset successfully. You can now log in with your new password."}), 200

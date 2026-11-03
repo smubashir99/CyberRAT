@@ -1,8 +1,8 @@
 """
-CyberRAT — Application Configuration
+CyberRAT v2 — Application Configuration
 =========================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : Centralised configuration for all environments.
 
 Security notes:
@@ -76,8 +76,18 @@ class Config:
     JWT_HEADER_TYPE    = "Bearer"
 
     # ---- CORS ----
-    # Only allow requests from the React dev server
+    # Production: only these origins may call the API (comma-separated).
+    # Development: all origins are allowed (see app/__init__.py).
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "http://localhost:3000")
+
+    # ---- Frontend URL (used in password-reset email links) ----
+    FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+
+    # ---- Data-at-rest encryption key ----
+    # Used to encrypt stored assessment answers (AES-256-GCM).
+    # If not set, a key is derived from SECRET_KEY with HKDF.
+    # Changing this key (or SECRET_KEY) makes old stored answers unreadable.
+    DATA_ENCRYPTION_KEY = os.environ.get("DATA_ENCRYPTION_KEY", "")
 
     # ---- Rate Limiting ----
     # Login endpoint: 5 attempts per minute (brute-force protection)
@@ -104,11 +114,13 @@ class Config:
     MAIL_DEBUG_MODE    = os.environ.get("MAIL_DEBUG_MODE", "true").lower() == "true"
 
     # ---- Default seed users ----
-    # These are created on first startup (change passwords immediately in prod)
-    SEED_ADMIN_EMAIL    = "admin@cyberrat.com"
-    SEED_ADMIN_PASSWORD = "Admin@CyberRAT2026!"
-    SEED_ANALYST_EMAIL  = "analyst@cyberrat.com"
-    SEED_ANALYST_PASSWORD = "Analyst@CyberRAT2026!"
+    # Created on first startup. The demo passwords below are only defaults:
+    # in production set SEED_ADMIN_PASSWORD / SEED_ANALYST_PASSWORD
+    # as environment variables so the real passwords are not in the code.
+    SEED_ADMIN_EMAIL      = os.environ.get("SEED_ADMIN_EMAIL",      "admin@cyberrat.com")
+    SEED_ADMIN_PASSWORD   = os.environ.get("SEED_ADMIN_PASSWORD",   "Admin@CyberRAT2026!")
+    SEED_ANALYST_EMAIL    = os.environ.get("SEED_ANALYST_EMAIL",    "analyst@cyberrat.com")
+    SEED_ANALYST_PASSWORD = os.environ.get("SEED_ANALYST_PASSWORD", "Analyst@CyberRAT2026!")
 
 
 class DevelopmentConfig(Config):

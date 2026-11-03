@@ -2,7 +2,7 @@
 CyberRAT v2 — Entry Point
 ===========================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : Start the Flask development server.
 
 Usage:
@@ -29,11 +29,11 @@ if __name__ == "__main__":
     print(f" Health Check: http://localhost:5000/api/health")
     print(f" ECDH Key    : http://localhost:5000/api/crypto/server-key")
     print("=" * 60)
-    print(" Default Credentials:")
-    print("   Admin   : admin@cyberrat.ie   / Admin@CyberRAT2026!")
-    print("   Analyst : analyst@cyberrat.ie / Analyst@CyberRAT2026!")
+    print(" Default accounts (passwords are in config.py or your .env):")
+    print(f"   Admin   : {app.config['SEED_ADMIN_EMAIL']}")
+    print(f"   Analyst : {app.config['SEED_ANALYST_EMAIL']}")
     print("=" * 60)
-# Start THE Flask development server (not for production use)
+
     app.run(
         host  = "0.0.0.0",
         port  = int(os.getenv("PORT", 5000)),
