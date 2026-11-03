@@ -2,7 +2,7 @@
 CyberRAT v2 — User Model
 ==========================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : AI-CRAF Dissertation — DBS Dublin
+Project : CRAF Dissertation — DBS Dublin
 Purpose : SQLAlchemy model for user accounts with role-based access control.
 
 Roles (RBAC):
