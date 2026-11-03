@@ -2,7 +2,7 @@
 CyberRAT v2 — Assessment Routes
 ==================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : Submit, list, and delete cybersecurity assessments.
 
 Endpoints:
@@ -13,7 +13,8 @@ Endpoints:
 Security:
   - Answers are received encrypted (AES-256-GCM) from the client.
   - The server decrypts using the ECDH-derived shared key.
-  - Decrypted answers are scored, then re-encrypted for storage.
+  - Decrypted answers are scored, then re-encrypted for storage
+    with the server's data-at-rest key (see services/crypto.py).
   - Scores are stored plaintext for aggregation.
 """
 
@@ -28,12 +29,12 @@ from app.middleware.rbac import require_analyst, get_current_user
 from app.services.scoring import compute_score
 from app.services.crypto import (
     compute_shared_secret,
-    encrypt_aes_gcm,
     decrypt_aes_gcm,
+    encrypt_stored_answers,
     generate_session_key_id,
 )
 from app.services.audit import log_event
-## Blueprint for assessment routes
+
 bp = Blueprint("assessment", __name__, url_prefix="/api/assessment")
 
 
@@ -97,7 +98,7 @@ def submit_assessment():
     # ---- Resolve assessment answers ----
     session_key_id   = None
     encrypted_payload = None
-    # Check if the request contains an encrypted payload and a client public key
+
     if "encrypted_payload" in data and "client_public_key" in data:
         # ── ENCRYPTED PATH (ECDH + AES-256-GCM) ──────────────
         try:
@@ -123,19 +124,14 @@ def submit_assessment():
         user.ecdh_public_key = data["client_public_key"]
         session_key_id = generate_session_key_id()
 
-        # Re-encrypt with a fresh server-side key for at-rest storage
-        encrypted_payload = encrypt_aes_gcm(answers, aes_key)
+        # Re-encrypt with the server's data-at-rest key for storage
+        encrypted_payload = encrypt_stored_answers(answers)
 
     elif "answers" in data:
         # ── PLAIN PATH (development / testing only) ───────────
         answers = data["answers"]
         # Encrypt the answers before storing (always store encrypted)
-        import os, json
-        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-        import base64
-        # Use a random one-time key for at-rest encryption (server-only)
-        ephemeral_key = os.urandom(32)
-        encrypted_payload = encrypt_aes_gcm(answers, ephemeral_key)
+        encrypted_payload = encrypt_stored_answers(answers)
         session_key_id = generate_session_key_id()
     else:
         return jsonify({
@@ -166,10 +162,10 @@ def submit_assessment():
         score_recover      = score_result["domain_scores"]["recover"],
         recommendations    = recommendations_str,
     )
-    # Add to DB
+
     db.session.add(assessment)
     db.session.commit()
-    # Log the submission event
+
     log_event(
         action        = AuditAction.ASSESSMENT_SUBMITTED,
         description   = (
@@ -182,7 +178,7 @@ def submit_assessment():
         resource_id   = assessment.id,
         resource_type = "assessment",
     )
-    # Return the assessment details and scoring results
+
     return jsonify({
         "message":    "Assessment submitted successfully.",
         "assessment": assessment.to_dict(),
@@ -206,7 +202,6 @@ def list_assessments():
     - Admin: returns ALL assessments across all users.
     - Analyst/Viewer: returns only the current user's assessments.
     """
-    # Get the current user from the JWT token
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
@@ -220,7 +215,7 @@ def list_assessments():
             .order_by(Assessment.created_at.desc())
             .all()
         )
-    # Return the list of assessments as JSON
+
     return jsonify({
         "assessments": [a.to_dict() for a in assessments],
         "total":       len(assessments),
@@ -240,21 +235,21 @@ def delete_assessment(assessment_id: int):
     """
     user       = get_current_user()
     assessment = Assessment.query.get(assessment_id)
-    # Check if the assessment exists
+
     if not assessment:
         return jsonify({"error": "Not Found", "message": "Assessment not found."}), 404
-    
+
     # Ownership check
     if not user.is_admin() and assessment.user_id != user.id:
         return jsonify({
             "error": "Forbidden",
             "message": "You do not have permission to delete this assessment."
         }), 403
-    # Delete the assessment
+
     company = assessment.company_name
     db.session.delete(assessment)
     db.session.commit()
-    # Log the deletion event
+
     log_event(
         action        = AuditAction.ASSESSMENT_DELETED,
         description   = f"User '{user.email}' deleted assessment #{assessment_id} ('{company}').",
@@ -264,5 +259,5 @@ def delete_assessment(assessment_id: int):
         resource_id   = assessment_id,
         resource_type = "assessment",
     )
-    # Return success message
+
     return jsonify({"message": f"Assessment #{assessment_id} deleted."}), 200

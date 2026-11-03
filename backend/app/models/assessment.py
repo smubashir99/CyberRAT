@@ -2,13 +2,17 @@
 CyberRAT v2 — Assessment Model
 ================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : SQLAlchemy model for cybersecurity risk assessments.
 
 Security design:
-  - The 10 criterion answers (c1–c10) are AES-256-GCM ENCRYPTED before being stored in the database.
-  - The encryption key is derived from the ECDH shared secret (unique per user session).
-  - This means even if the database is compromised, raw assessment answers cannot be read without the ECDH private key.
+  - The 10 criterion answers (c1–c10) are AES-256-GCM ENCRYPTED
+    before being stored in the database.
+  - In transit, answers can be protected with an ECDH-derived key.
+  - At rest, they are encrypted with the server's data-at-rest key
+    (DATA_ENCRYPTION_KEY, or derived from SECRET_KEY).
+  - This means if only the database is stolen, raw assessment
+    answers cannot be read without that key.
   - encrypted_answers: stores the ciphertext (base64-encoded)
   - iv: the AES-GCM Initialisation Vector (unique per encryption)
   - tag: the GCM authentication tag (detects tampering)

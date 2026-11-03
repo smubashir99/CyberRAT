@@ -2,7 +2,7 @@
 CyberRAT v2 — Cryptography Service
 =====================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : ECDH key exchange + AES-256-GCM encryption/decryption
           for securing assessment data in transit and at rest.
 
@@ -80,7 +80,7 @@ def init_server_keypair():
     Curve: SECP256R1 (P-256) — NIST-approved, widely supported.
     """
     global _server_private_key, _server_public_key_pem
-    # Generate a new ECDH private key for the server
+
     _server_private_key = generate_private_key(SECP256R1(), default_backend())
 
     # Export public key as PEM (sent to clients)
@@ -88,18 +88,19 @@ def init_server_keypair():
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo,
     ).decode("utf-8")
-    
+
     print("[CyberRAT Crypto] ECDH server key pair generated (P-256 / secp256r1)")
+
 
 def get_server_public_key_pem() -> str:
     """
     Return the server's ECDH public key in PEM format.
     This is the value sent to clients via GET /api/crypto/server-key.
     """
-    # Ensure the server key pair has been initialised
     if _server_public_key_pem is None:
         raise RuntimeError("Server ECDH key pair not initialised. Call init_server_keypair() first.")
     return _server_public_key_pem
+
 
 def compute_shared_secret(client_public_key_pem: str) -> bytes:
     """
@@ -124,7 +125,6 @@ def compute_shared_secret(client_public_key_pem: str) -> bytes:
             client_public_key_pem.encode("utf-8"),
             backend=default_backend()
         )
-        # Validate that it's an ECDH public key on the correct curve
     except Exception as e:
         raise ValueError(f"Invalid client ECDH public key: {e}")
 
@@ -143,6 +143,7 @@ def compute_shared_secret(client_public_key_pem: str) -> bytes:
     ).derive(raw_shared_secret)
 
     return aes_key
+
 
 def encrypt_aes_gcm(plaintext: dict, aes_key: bytes) -> dict:
     """
@@ -220,6 +221,51 @@ def decrypt_aes_gcm(ciphertext_b64: str, iv_b64: str, auth_tag_b64: str, aes_key
         raise InvalidTag("AES-GCM authentication failed: ciphertext may have been tampered with.")
 
     return json.loads(plaintext_bytes.decode("utf-8"))
+
+
+def get_data_at_rest_key() -> bytes:
+    """
+    Return the 256-bit AES key used to encrypt assessment answers in the database.
+
+    - If DATA_ENCRYPTION_KEY is set (64 hex characters), it is used directly.
+    - Otherwise the key is derived from SECRET_KEY with HKDF-SHA256.
+
+    The key is stable across restarts, so stored answers can be decrypted later.
+    """
+    from flask import current_app
+
+    configured = current_app.config.get("DATA_ENCRYPTION_KEY", "")
+    if configured:
+        try:
+            key = bytes.fromhex(configured)
+        except ValueError:
+            raise RuntimeError("DATA_ENCRYPTION_KEY must be 64 hex characters (32 bytes).")
+        if len(key) != 32:
+            raise RuntimeError("DATA_ENCRYPTION_KEY must be 64 hex characters (32 bytes).")
+        return key
+
+    return HKDF(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=None,
+        info=b"CyberRAT-v2-data-at-rest",
+        backend=default_backend()
+    ).derive(current_app.config["SECRET_KEY"].encode("utf-8"))
+
+
+def encrypt_stored_answers(answers: dict) -> dict:
+    """Encrypt assessment answers for storage in the database (AES-256-GCM)."""
+    return encrypt_aes_gcm(answers, get_data_at_rest_key())
+
+
+def decrypt_stored_answers(assessment) -> dict:
+    """Decrypt the stored answers of an Assessment row (verifies the GCM tag)."""
+    return decrypt_aes_gcm(
+        ciphertext_b64 = assessment.encrypted_answers,
+        iv_b64         = assessment.iv,
+        auth_tag_b64   = assessment.auth_tag,
+        aes_key        = get_data_at_rest_key(),
+    )
 
 
 def generate_session_key_id() -> str:
