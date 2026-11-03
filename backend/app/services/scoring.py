@@ -78,7 +78,7 @@ CRITERION_WEIGHTS: Dict[str, int] = {
     "c9_software_updates":        8,   # Automatic Software Updates    (adoption: 39%, gap: 61%)
     "c10_vpn_remote":             7,   # VPN for Remote Access         (adoption: 24%, gap: 76%)
 }
-# Maximum possible weighted sum (denominator for normalisation)
+
 MAX_WEIGHTED_SUM: int = sum(CRITERION_WEIGHTS.values())  # 89
 
 # MTU/NCSC 2025 Irish SME sector benchmarks (for comparison)
@@ -118,18 +118,58 @@ NIST_DOMAINS: Dict[str, List[str]] = {
     "identify": ["c7_cyber_policy"],
     "protect":  ["c2_mfa", "c4_security_training",
                  "c6_password_policy", "c8_network_security", "c9_software_updates", "c10_vpn_remote"],
-    "detect":   [],   # No standalone detect criterion (covered by network security)
+    "detect":   [],   # Not weighted: Detect is scored from C8 detection levels (see below)
     "respond":  ["c3_incident_response"],
     "recover":  ["c1_data_backup", "c5_business_continuity"],
 }
 
 # Maximum weighted sum per domain (for normalising domain scores to 0-10)
-# Note: 'detect' has no standalone criterion in MTU/NCSC dataset controls
-# but is kept for NIST CSF completeness; score = 0 if no criteria mapped.
+# Note: 'detect' has no weighted criterion in the MTU/NCSC dataset.
+# Its domain score is calculated separately by compute_detect_level().
 DOMAIN_MAX: Dict[str, int] = {
     domain: sum(CRITERION_WEIGHTS[c] for c in criteria) if criteria else 1
     for domain, criteria in NIST_DOMAINS.items()
 }
+
+
+# ----------------------------------------------------------------
+# NIST CSF DETECT domain — derived from C8 detection capability
+# ----------------------------------------------------------------
+# The MTU/NCSC 2025 dataset has no separate Detect control, so Detect
+# carries NO weight and does NOT change the overall score (still /89).
+#
+# But the C8 (Network Security Controls) answer options describe
+# detection capability (NIST CSF DE.CM — continuous monitoring):
+#   1 = No firewall or network controls                  → no detection
+#   2 = Basic router firewall only                       → no detection
+#   3 = Firewall + separate Wi-Fi networks               → no detection
+#   4 = ... + intrusion detection                        → partial (0.5)
+#   5 = ... IDS/IPS, DNS filtering, monitored 24/7       → full    (1.0)
+#
+# So the Detect domain score = detection level × 10.
+DETECT_LEVEL_BY_C8_ANSWER: Dict[int, float] = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.5, 5: 1.0}
+
+
+def compute_detect_level(raw_answers: Dict) -> float:
+    """
+    Return the detection capability level (0.0, 0.5 or 1.0) from the C8 answer.
+
+    - Frontend format ("c8": 1–5): uses DETECT_LEVEL_BY_C8_ANSWER.
+    - Internal format ("c8_network_security": 0 / 0.5 / 1.0): the exact
+      option is unknown, so 1.0 (answer 4 or 5) counts as partial (0.5)
+      and anything lower counts as 0.0.
+    """
+    for key, value in raw_answers.items():
+        k = str(key).lower()
+        try:
+            v = float(value)
+        except (TypeError, ValueError):
+            return 0.0
+        if k == "c8":
+            return DETECT_LEVEL_BY_C8_ANSWER.get(int(round(v)), 0.0)
+        if k == "c8_network_security":
+            return 0.5 if v >= 0.9 else 0.0
+    return 0.0
 
 
 # ----------------------------------------------------------------
@@ -159,7 +199,6 @@ def get_risk_level(score: float) -> str:
     Returns:
         Risk level string: "Low", "Medium", "High", or "Critical".
     """
-    # Map score to risk level based on defined bands
     if score >= 8.0:
         return "Low"
     elif score >= 6.0:
@@ -199,7 +238,6 @@ def normalise_answers(raw: Dict) -> Dict[str, float]:
 
     Converts format A → B.  Format B is passed through unchanged.
     """
-    # Map frontend short keys to internal long keys and convert 1–5 scale to 0/0.5/1.0
     normalised = {}
     for raw_key, raw_val in raw.items():
         # Map short key to full key if needed
@@ -214,7 +252,7 @@ def normalise_answers(raw: Dict) -> Dict[str, float]:
         raw_key_str = str(raw_key).lower()
         is_frontend_key = raw_key_str in FRONTEND_KEY_MAP
         is_long_key     = raw_key_str in CRITERION_WEIGHTS
-        # If the key is a frontend short key or a numeric value ≥1 (frontend scale),
+
         if is_frontend_key or (isinstance(raw_val, (int, float)) and raw_val >= 1 and not is_long_key):
             # 1–5 scale: 1-2 → 0.0, 3 → 0.5, 4-5 → 1.0
             if raw_val >= 4:
@@ -257,6 +295,9 @@ def compute_score(answers: Dict[str, float]) -> Dict[str, Any]:
           max_sum         — 89 (the denominator)
           recommendations — list of recommendation strings
     """
+    # Detection level comes from the raw C8 answer (before normalising)
+    detect_level = compute_detect_level(answers)
+
     # Normalise from frontend format (c1–c10, 1–5 scale) if needed
     answers = normalise_answers(answers)
 
@@ -288,11 +329,15 @@ def compute_score(answers: Dict[str, float]) -> Dict[str, Any]:
         domain_score = round((domain_weighted / DOMAIN_MAX[domain]) * 10, 2)
         domain_scores[domain] = domain_score
 
+    # Detect has no weighted criterion — use the C8 detection level instead.
+    # This does NOT change the overall score.
+    domain_scores["detect"] = round(detect_level * 10, 2)
+
     # ---- Risk level ----
     risk_level = get_risk_level(overall_score)
 
     # ---- Generate targeted recommendations ----
-    recommendations = generate_recommendations(sanitised, domain_scores, risk_level)
+    recommendations = generate_recommendations(sanitised, domain_scores, risk_level, detect_level)
 
     return {
         "overall_score":      overall_score,
@@ -302,6 +347,7 @@ def compute_score(answers: Dict[str, float]) -> Dict[str, Any]:
         "max_sum":            MAX_WEIGHTED_SUM,
         "recommendations":    recommendations,
         "criterion_scores":   {k: sanitised[k] for k in CRITERION_WEIGHTS},
+        "detect_level":       detect_level,
         "control_adoption":   CONTROL_ADOPTION_RATES,  # For frontend benchmark display
     }
 
@@ -388,10 +434,21 @@ RECOMMENDATION_TEMPLATES: Dict[str, str] = {
 }
 
 
+DETECT_RECOMMENDATION: str = (
+    "DETECT — Security Monitoring and Intrusion Detection: "
+    "Make sure attacks are noticed quickly. (1) Turn on the intrusion detection or threat alerts "
+    "in your firewall or router, (2) Use endpoint protection with central alerts (for example Microsoft "
+    "Defender for Business), (3) Turn on login alerts for email and cloud accounts, "
+    "(4) Choose one person to check alerts every day, or use a managed monitoring service. "
+    "NIST CSF DE.CM: networks and devices should be monitored to find attacks early."
+)
+
+
 def generate_recommendations(
     sanitised_answers: Dict[str, float],
     domain_scores: Dict[str, float],
-    risk_level: str
+    risk_level: str,
+    detect_level: float = 1.0,
 ) -> List[str]:
     """
     Generate prioritised recommendations based on criterion scores.
@@ -399,7 +456,8 @@ def generate_recommendations(
     Logic:
       1. Any criterion scored 0.0 → CRITICAL recommendation (must address)
       2. Any criterion scored 0.5 → IMPROVEMENT recommendation (should address)
-      3. If all criteria scored 1.0 → maintenance recommendations only
+      3. Detection level below 1.0 → DETECT improvement recommendation
+      4. If no gaps at all → maintenance recommendation only
 
     Returns a list of recommendation strings (max 10, prioritised by weight).
     """
@@ -411,7 +469,7 @@ def generate_recommendations(
         key=lambda k: CRITERION_WEIGHTS[k],
         reverse=True
     )
-    # Generate recommendations for each criterion based on score
+
     for criterion in sorted_criteria:
         score = sanitised_answers.get(criterion, 0.0)
         if score < 1.0:  # non-compliant or partial
@@ -420,6 +478,10 @@ def generate_recommendations(
                 prefix = "[CRITICAL] " if score == 0.0 else "[IMPROVE] "
                 recommendations.append(prefix + rec)
 
+    # Detect gap (not weighted, so it is always an improvement, never critical)
+    if detect_level < 1.0:
+        recommendations.append("[IMPROVE] " + DETECT_RECOMMENDATION)
+
     # If no gaps found, add a maintenance recommendation
     if not recommendations:
         recommendations.append(
@@ -427,5 +489,5 @@ def generate_recommendations(
             "staff training, and patch management to sustain your Low Risk rating. "
             "Consider pursuing ISO 27001 certification to formalise your controls."
         )
-    # Limit to top 10 recommendations
+
     return recommendations
