@@ -2,7 +2,7 @@
 CyberRAT v2 — Application Factory
 =====================================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : Flask application factory using the create_app() pattern.
 
 The factory pattern:
@@ -49,9 +49,18 @@ def create_app(config_name: str = None) -> Flask:
     limiter.init_app(app)
     mail.init_app(app)
 
-    # ── 3. CORS (allow any origin in dev — fix for VM/network setups) ──
+    # ── 3. CORS ──────────────────────────────────────────────
+    # Development: allow any origin (helps VM / local network testing).
+    # Production : only the frontend URL(s) in CORS_ORIGINS
+    #              (comma-separated list, set in render.yaml).
+    if app.config.get("DEBUG"):
+        allowed_origins = "*"
+    else:
+        allowed_origins = [
+            o.strip() for o in app.config.get("CORS_ORIGINS", "").split(",") if o.strip()
+        ]
     CORS(app,
-         origins="*",
+         origins=allowed_origins,
          allow_headers=["Content-Type", "Authorization"],
          methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
          supports_credentials=False)

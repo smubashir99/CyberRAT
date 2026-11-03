@@ -2,7 +2,7 @@
 CyberRAT v2 — User Model
 ==========================
 Author  : Syed Mubashir Ahmed Hashmi (20089221)
-Project : CRAF Dissertation — DBS Dublin
+Project : AI-CRAF Dissertation — DBS Dublin
 Purpose : SQLAlchemy model for user accounts with role-based access control.
 
 Roles (RBAC):
@@ -91,8 +91,11 @@ class User(db.Model):
     assessments = db.relationship(
         "Assessment", back_populates="user", lazy="dynamic", cascade="all, delete-orphan"
     )
+    # Audit logs are NOT deleted with the user (no delete cascade).
+    # When a user is deleted, their audit rows stay and user_id becomes NULL;
+    # user_email is still kept, so the security history is preserved.
     audit_logs = db.relationship(
-        "AuditLog", back_populates="user", lazy="dynamic", cascade="all, delete-orphan"
+        "AuditLog", back_populates="user", lazy="dynamic"
     )
 
     # ----------------------------------------------------------------
