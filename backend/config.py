@@ -15,11 +15,16 @@ Security notes:
 
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
 
 # ----------------------------------------------------------------
 # Base directory — where config.py lives (backend/)
 # ----------------------------------------------------------------
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Load backend/.env BEFORE the Config class reads os.environ.
+# Real environment variables (e.g. on Render) are NOT overwritten.
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 
 class Config:
