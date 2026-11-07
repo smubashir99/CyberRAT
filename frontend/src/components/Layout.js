@@ -1,5 +1,5 @@
 /**
- * CyberRAT v2 — Main Layout (Sidebar + Topbar)
+ * CyberRAT — Main Layout (Sidebar + Topbar)
  * Author: Syed Mubashir Ahmed Hashmi (20089221)
  */
 
@@ -8,7 +8,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import "./Layout.css";
-
+// Navigation items for the sidebar, including main and admin sections. Each item has a route, icon, and label.
 const NAV_ITEMS = [
   { to: "/dashboard",   icon: "⬡",  label: "Dashboard"   },
   { to: "/assessment",  icon: "📋",  label: "Assessment"  },
@@ -19,17 +19,19 @@ const NAV_ITEMS = [
   { to: "/crypto-demo", icon: "🔐",  label: "ECDH Demo"   },
   { to: "/case-study",  icon: "☕",  label: "Café Bríd" },
 ];
-
+// Admin-only navigation items for the sidebar, including user management and audit log.
 const ADMIN_ITEMS = [
   { to: "/admin/users",  icon: "👥",  label: "Users"       },
   { to: "/admin/audit",  icon: "📜",  label: "Audit Log"   },
 ];
-
+// Layout component renders the main layout of the application, including the sidebar and main content area. 
+// It handles user authentication, navigation, and logout functionality.
 export default function Layout({ children }) {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-
+  // Handle user logout by calling the logout function from the auth context, displaying a success toast, 
+  // and navigating to the login page.
   const handleLogout = async () => {
     try {
       await logout();
@@ -39,13 +41,13 @@ export default function Layout({ children }) {
       navigate("/login");
     }
   };
-
+  // Determine the appropriate badge class for the user's role to display in the sidebar.
   const roleBadge = {
     admin:   "badge badge-admin",
     analyst: "badge badge-analyst",
     viewer:  "badge badge-viewer",
   }[user?.role] || "badge badge-viewer";
-
+  // Render the layout with a collapsible sidebar containing navigation links, user information, and a logout button.
   return (
     <div className={`layout ${collapsed ? "layout--collapsed" : ""}`}>
       {/* ── Sidebar ───────────────────────────────────── */}
@@ -66,7 +68,7 @@ export default function Layout({ children }) {
             {collapsed ? "›" : "‹"}
           </button>
         </div>
-
+         {/* Render the main navigation links in the sidebar, highlighting the active link and displaying icons and labels.*/}
         <nav className="sidebar__nav">
           <div className="sidebar__section-label">{!collapsed && "MAIN"}</div>
           {NAV_ITEMS.map(({ to, icon, label }) => (
@@ -82,7 +84,8 @@ export default function Layout({ children }) {
               {!collapsed && <span>{label}</span>}
             </NavLink>
           ))}
-
+           {/* Render the admin-only navigation links in the sidebar if the user has admin privileges,
+          including user management and audit log, with appropriate icons and labels.*/}
           {isAdmin && (
             <>
               <div className="sidebar__section-label">{!collapsed && "ADMIN"}</div>
@@ -102,7 +105,7 @@ export default function Layout({ children }) {
             </>
           )}
         </nav>
-
+         {/* Render the user information and logout button in the sidebar footer, displaying the user's initials,*/}
         <div className="sidebar__footer">
           <div className="sidebar__user">
             <div className="sidebar__avatar">
@@ -126,7 +129,7 @@ export default function Layout({ children }) {
           </button>
         </div>
       </aside>
-
+   {/* ──  Render the main content area of the layout, which displays the children components passed to the Layout component.*/}
       {/* ── Main content ─────────────────────────────── */}
       <main className="main-content">
         {children}
