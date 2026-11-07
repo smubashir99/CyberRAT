@@ -1,0 +1,203 @@
+/* CyberRAT v2 — Layout Styles */
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  transition: width 0.2s ease;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.layout--collapsed .sidebar { width: 60px; }
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--border);
+  min-height: 64px;
+}
+
+.sidebar__logo { font-size: 24px; flex-shrink: 0; }
+
+.sidebar__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  white-space: nowrap;
+}
+
+.sidebar__subtitle {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.sidebar__collapse-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.sidebar__collapse-btn:hover { color: var(--text-primary); border-color: var(--border-light); }
+
+.sidebar__nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.sidebar__section-label {
+  padding: 8px 14px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s;
+  border-radius: 6px;
+  margin: 1px 6px;
+  white-space: nowrap;
+}
+.sidebar__link:hover { background: var(--bg-hover); color: var(--text-primary); text-decoration: none; }
+.sidebar__link--active { background: rgba(88,166,255,0.1); color: var(--accent-blue); }
+.sidebar__link--active:hover { background: rgba(88,166,255,0.15); }
+
+.sidebar__link-icon { font-size: 16px; flex-shrink: 0; }
+
+.sidebar__footer {
+  border-top: 1px solid var(--border);
+  padding: 12px;
+}
+
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.sidebar__avatar {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.sidebar__user-name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__logout-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.sidebar__logout-btn:hover { border-color: var(--accent-red); color: var(--accent-red); background: rgba(248,81,73,0.05); }
+
+/* ── Main content ─────────────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  margin-left: 240px;
+  transition: margin-left 0.2s ease;
+  min-height: 100vh;
+}
+
+.layout--collapsed .main-content { margin-left: 60px; }
+
+/* ── Page container ───────────────────────────────────────────── */
+.page {
+  padding: 28px 32px;
+  max-width: 1280px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Stat card */
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+.stat-card__icon { font-size: 24px; margin-bottom: 8px; }
+.stat-card__value { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+.stat-card__label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main-content { margin-left: 0; }
+  .page { padding: 16px; }
+}
