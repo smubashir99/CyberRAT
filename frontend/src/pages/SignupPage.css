@@ -1,0 +1,119 @@
+/* ============================================================
+   CyberRAT— SignupPage.css
+   Extra styles specific to the Signup page.
+   Shared card / form styles come from LoginPage.css.
+   ============================================================ */
+
+/* Wider card for signup (needs more real estate for fields) */
+.signup-card {
+  max-width: 500px;
+}
+
+/* First-name / Last-name on one row */
+.signup-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .signup-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Select dropdown — consistent with .form-control */
+.form-control select,
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* Hint text below a field */
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Error highlight on input */
+.form-control--error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.form-error-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  color: #ef4444;
+}
+
+/* Password show/hide toggle wrapper */
+.input-with-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-toggle .form-control {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.input-toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.input-toggle-btn:hover {
+  color: #e2e8f0;
+}
+
+/* ── Password rules checklist ── */
+.pw-rules {
+  list-style: none;
+  padding: 10px 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pw-rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #64748b;
+  transition: color 0.2s;
+}
+
+.pw-rule--met {
+  color: #22c55e;
+}
+
+.pw-rule-icon {
+  font-size: 13px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.pw-rule:not(.pw-rule--met) .pw-rule-icon {
+  color: #475569;
+}
