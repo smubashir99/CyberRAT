@@ -1,0 +1,242 @@
+/* CyberRAT — Assessment Page Styles */
+
+/* ── Progress ───────────────────────────────────────────── */
+.assessment-progress-wrap {
+  height: 4px;
+  background: var(--bg-card);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.assessment-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.assessment-step-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.assessment-card {
+  max-width: 720px;
+}
+
+.assessment-card__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.assessment-card__desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+/* ── Criteria header ────────────────────────────────────── */
+.criteria-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.criteria-domain-badge,
+.criteria-weight-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.criteria-weight-badge {
+  background: rgba(88,166,255,0.08);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+/* ── Answer options ─────────────────────────────────────── */
+.criteria-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.criteria-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.criteria-option:hover {
+  border-color: var(--border-light);
+  background: var(--bg-hover);
+}
+
+.criteria-option--selected {
+  border-color: var(--accent-blue);
+  background: rgba(88,166,255,0.08);
+}
+
+.criteria-option__score {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.criteria-option--selected .criteria-option__score {
+  background: var(--accent-blue);
+  color: #fff;
+  border-color: var(--accent-blue);
+}
+
+.criteria-option__label {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+.assessment-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Organisation size buttons ──────────────────────────── */
+.size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.size-btn {
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.size-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+
+.size-btn--active {
+  border-color: var(--accent-blue);
+  background: rgba(88,166,255,0.1);
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+
+/* ── Review grid ────────────────────────────────────────── */
+.review-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.review-item:hover { border-color: var(--border-light); }
+
+.review-item__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-item__id {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--accent-blue);
+  width: 30px;
+}
+
+.review-item__label {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.review-score {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+.review-score--high     { color: var(--risk-low);      background: rgba(63,185,80,0.1); }
+.review-score--medium   { color: var(--risk-medium);   background: rgba(210,153,34,0.1); }
+.review-score--low      { color: var(--risk-high);     background: rgba(240,136,62,0.1); }
+.review-score--critical { color: var(--risk-critical); background: rgba(248,81,73,0.1); }
+
+.review-summary {
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* ── Dataset context note (Irish SME adoption data) ─────── */
+.criteria-dataset-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: rgba(88,166,255,0.06);
+  border: 1px solid rgba(88,166,255,0.2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.criteria-dataset-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
