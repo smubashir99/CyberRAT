@@ -1,0 +1,591 @@
+/* ============================================================
+   CyberRAT — Benchmark Page Styles
+   Author: Syed Mubashir Ahmed Hashmi (20089221)
+   ============================================================ */
+
+/* ── Page shell ──────────────────────────────────────────── */
+.bm-page {
+  padding: 32px 36px;
+  max-width: 1200px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Loading / error / empty ─────────────────────────────── */
+.bm-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 0;
+  justify-content: center;
+  color: #8b949e;
+  font-size: 14px;
+}
+
+.bm-error {
+  padding: 24px;
+  color: #f85149;
+  background: rgba(248,81,73,0.08);
+  border: 1px solid rgba(248,81,73,0.25);
+  border-radius: 8px;
+}
+
+.bm-empty {
+  text-align: center;
+  padding: 80px 0;
+  color: #8b949e;
+}
+.bm-empty__icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.bm-empty h3    { color: #e6edf3; margin-bottom: 8px; }
+.bm-empty p     { margin-bottom: 20px; font-size: 13px; }
+
+/* ── Header ───────────────────────────────────────────────── */
+.bm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bm-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #e6edf3;
+  margin: 0 0 4px;
+}
+
+.bm-subtitle {
+  font-size: 0.875rem;
+  color: #8b949e;
+  margin: 0;
+}
+
+.bm-source {
+  color: #484f58;
+  font-style: italic;
+}
+
+/* ── KPI row ──────────────────────────────────────────────── */
+.bm-kpi-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+/* ── Score gauge ──────────────────────────────────────────── */
+.bm-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.bm-gauge--highlight {
+  background: rgba(0,212,222,0.05);
+  border: 1px solid rgba(0,212,222,0.2);
+  border-radius: 10px;
+}
+
+.bm-gauge__ring {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bm-gauge__svg {
+  width: 72px;
+  height: 72px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+}
+
+.bm-gauge__track {
+  fill: none;
+  stroke: #21262d;
+  stroke-width: 5;
+}
+
+.bm-gauge__fill {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.8s ease;
+}
+
+.bm-gauge__val {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.bm-gauge__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e6edf3;
+  text-align: center;
+}
+
+.bm-gauge__sub {
+  font-size: 10px;
+  color: #8b949e;
+  text-align: center;
+}
+
+/* ── Delta cards ──────────────────────────────────────────── */
+.bm-delta-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  padding-left: 8px;
+  border-left: 1px solid #30363d;
+  margin-left: 8px;
+}
+
+.bm-delta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  min-width: 160px;
+}
+
+.bm-delta--above { border-color: rgba(63,185,80,0.25); }
+.bm-delta--below { border-color: rgba(248,81,73,0.25); }
+.bm-delta--percentile { border-color: rgba(88,166,255,0.25); }
+
+.bm-delta__arrow {
+  font-size: 14px;
+  font-weight: 700;
+  width: 18px;
+  text-align: center;
+}
+.bm-delta--above .bm-delta__arrow    { color: #3fb950; }
+.bm-delta--below .bm-delta__arrow    { color: #f85149; }
+.bm-delta--percentile .bm-delta__arrow { color: #58a6ff; font-size: 12px; }
+
+.bm-delta__val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  min-width: 36px;
+}
+.bm-delta--above .bm-delta__val     { color: #3fb950; }
+.bm-delta--below .bm-delta__val     { color: #f85149; }
+.bm-delta--percentile .bm-delta__val { color: #58a6ff; }
+
+.bm-delta__label {
+  font-size: 11px;
+  color: #8b949e;
+  flex: 1;
+}
+
+/* ── Tabs ──────────────────────────────────────────────────── */
+.bm-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 0;
+}
+
+.bm-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+.bm-tab:hover { color: #e6edf3; }
+.bm-tab--active {
+  color: #00d4de;
+  border-bottom-color: #00d4de;
+  font-weight: 600;
+}
+
+/* ── Panel ─────────────────────────────────────────────────── */
+.bm-panel {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.bm-panel__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e6edf3;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bm-panel__badge {
+  font-size: 10px;
+  color: #484f58;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.bm-panel__desc {
+  font-size: 12px;
+  color: #8b949e;
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+/* ── Sector table ──────────────────────────────────────────── */
+.bm-sector-table-wrap {
+  overflow-x: auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  border: 1px solid #21262d;
+}
+
+.bm-sector-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.bm-sector-table thead tr {
+  background: #0d1117;
+  border-bottom: 1px solid #30363d;
+}
+
+.bm-sector-table th {
+  color: #8b949e;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.bm-sector-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #21262d;
+  color: #c9d1d9;
+}
+
+.bm-sector-table tr:last-child td { border-bottom: none; }
+
+.bm-table-row--highlight {
+  background: rgba(0,212,222,0.04);
+}
+.bm-table-row--highlight td { border-color: rgba(0,212,222,0.1); }
+
+/* ── Controls grid ─────────────────────────────────────────── */
+.bm-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.bm-ctrl-card {
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bm-ctrl-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bm-ctrl-card__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e6edf3;
+}
+
+.bm-ctrl-card__domain {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* Adoption bar */
+.bm-ctrl-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bm-ctrl-bar-label {
+  font-size: 9px;
+  color: #484f58;
+  white-space: nowrap;
+  width: 64px;
+}
+
+.bm-ctrl-bar-track {
+  flex: 1;
+  height: 5px;
+  background: #21262d;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bm-ctrl-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.bm-ctrl-bar-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8b949e;
+  min-width: 28px;
+  text-align: right;
+}
+
+.bm-ctrl-gap {
+  font-size: 10px;
+  color: #d29922;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bm-ctrl-gap__icon { font-size: 9px; }
+
+.bm-ctrl-weight {
+  font-size: 10px;
+  color: #484f58;
+}
+
+/* ── Radar ─────────────────────────────────────────────────── */
+.bm-radar-wrap { margin-top: 8px; }
+
+.bm-radar-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.bm-legend-item {
+  font-size: 11px;
+  font-weight: 600;
+}
+.bm-legend-item--you    { color: #00d4de; }
+.bm-legend-item--sector { color: #58a6ff; }
+.bm-legend-item--sme    { color: #484f58; }
+
+/* ── Percentile card ───────────────────────────────────────── */
+.bm-percentile-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-top: 20px;
+}
+
+.bm-percentile-card__left {
+  text-align: center;
+  min-width: 80px;
+}
+
+.bm-percentile-card__pct {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #58a6ff;
+  line-height: 1;
+}
+
+.bm-percentile-card__pct sup {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.bm-percentile-card__label {
+  font-size: 11px;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-top: 4px;
+}
+
+.bm-percentile-card__right {
+  flex: 1;
+}
+
+.bm-percentile-card__right p {
+  font-size: 13px;
+  color: #c9d1d9;
+  margin: 0 0 6px;
+  line-height: 1.6;
+}
+.bm-percentile-card__right p:last-child { margin-bottom: 0; }
+
+/* ── Footer ────────────────────────────────────────────────── */
+.bm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 11px;
+  color: #484f58;
+  border-top: 1px solid #21262d;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bm-footer__link {
+  color: #58a6ff;
+  text-decoration: none;
+  font-size: 12px;
+}
+.bm-footer__link:hover { text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .bm-page      { padding: 20px 16px; }
+  .bm-kpi-row   { flex-direction: column; }
+  .bm-delta-cards { border-left: none; margin-left: 0; padding-left: 0; flex-direction: row; flex-wrap: wrap; }
+  .bm-delta     { min-width: 140px; flex: 1; }
+  .bm-header    { flex-direction: column; }
+  .bm-tabs      { overflow-x: auto; }
+  .bm-tab       { white-space: nowrap; }
+  .bm-controls-grid { grid-template-columns: 1fr; }
+  .bm-percentile-card { flex-direction: column; }
+}
+
+/* ── Assessment Selector ──────────────────────────────────────── */
+.bm-selector {
+  margin-bottom: 20px;
+}
+
+.bm-selector__label {
+  font-size: 12px;
+  color: #8b949e;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bm-selector__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bm-sel-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 160px;
+  flex: 1;
+  max-width: 240px;
+}
+
+.bm-sel-card:hover {
+  background: #1c2128;
+  border-color: #484f58;
+}
+
+.bm-sel-card--active {
+  background: rgba(0, 212, 222, 0.06);
+}
+
+.bm-sel-card__score {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.bm-sel-card__company {
+  font-size: 12px;
+  color: #c9d1d9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 4px;
+  max-width: 200px;
+}
+
+.bm-sel-card__meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+
+.bm-sel-card__sector {
+  color: #8b949e;
+}
+
+.bm-sel-card__risk {
+  font-weight: 600;
+}
+
+.bm-sel-card__date {
+  font-size: 10px;
+  color: #484f58;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .bm-sel-card { max-width: 100%; }
+}
