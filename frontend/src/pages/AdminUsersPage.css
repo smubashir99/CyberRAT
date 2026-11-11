@@ -1,0 +1,136 @@
+/* CyberRAT — Admin Users Page Styles */
+
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.page-loader { display: flex; align-items: center; gap: 12px; padding: 32px; color: var(--text-secondary); font-size: 14px; }
+.table-wrap  { overflow-x: auto; }
+
+.dash-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+/* Badge variants (repeated here for page isolation) */
+.badge-low      { background: rgba(63,185,80,0.15);   color: var(--risk-low);       border-color: rgba(63,185,80,0.3); }
+.badge-critical { background: rgba(248,81,73,0.15);   color: var(--risk-critical);  border-color: rgba(248,81,73,0.3); }
+.badge-admin    { background: rgba(188,140,255,0.15); color: var(--accent-purple);  border-color: rgba(188,140,255,0.3); }
+.badge-analyst  { background: rgba(88,166,255,0.15);  color: var(--accent-blue);    border-color: rgba(88,166,255,0.3); }
+.badge-viewer   { background: rgba(139,148,158,0.15); color: var(--text-secondary); border-color: var(--border); }
+
+/* ── User cell ──────────────────────────────────────────── */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.you-badge {
+  display: inline-flex;
+  margin-left: 6px;
+  padding: 1px 6px;
+  background: rgba(88,166,255,0.15);
+  color: var(--accent-blue);
+  font-size: 10px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+/* ── Role select ────────────────────────────────────────── */
+.role-select {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.role-select:focus { outline: none; border-color: var(--accent-blue); }
+.role-select:disabled { opacity: 0.5; cursor: default; }
+
+/* ── RBAC explanation ───────────────────────────────────── */
+.rbac-info { margin-top: 16px; }
+
+.rbac-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.rbac-role {
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.rbac-role .badge {
+  display: inline-flex;
+  margin-bottom: 10px;
+}
+
+.rbac-role ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rbac-role li {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 3px 0;
+  padding-left: 14px;
+  position: relative;
+}
+
+.rbac-role li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+}
+
+.text-warning { color: var(--risk-high); }
+
+/* ── Action buttons group ───────────────────────────────── */
+.action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Confirm inline */
+.confirm-delete-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--risk-critical);
+  white-space: nowrap;
+}
+
+/* Warning button variant */
+.btn-warning {
+  background: rgba(245,176,65,0.15);
+  color: #f5b041;
+  border: 1px solid rgba(245,176,65,0.3);
+}
+.btn-warning:hover:not(:disabled) {
+  background: rgba(245,176,65,0.25);
+}

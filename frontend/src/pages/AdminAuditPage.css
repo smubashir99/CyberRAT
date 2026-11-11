@@ -1,0 +1,71 @@
+/* CyberRAT — Admin Audit Page Styles */
+
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.page-loader  { display: flex; align-items: center; gap: 12px; padding: 32px; color: var(--text-secondary); font-size: 14px; }
+.table-wrap   { overflow-x: auto; }
+
+/* Badge variants */
+.badge-low      { background: rgba(63,185,80,0.15);  color: var(--risk-low);      border-color: rgba(63,185,80,0.3); }
+.badge-critical { background: rgba(248,81,73,0.15);  color: var(--risk-critical); border-color: rgba(248,81,73,0.3); }
+
+/* ── Filter row ─────────────────────────────────────────── */
+.audit-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.audit-filter-select {
+  max-width: 260px;
+}
+
+/* ── Table specifics ────────────────────────────────────── */
+.audit-table td { vertical-align: top; }
+
+.audit-ts { font-size: 11px; white-space: nowrap; }
+.audit-ip { font-size: 11px; font-family: monospace; white-space: nowrap; }
+
+/* ── Action badge ───────────────────────────────────────── */
+.audit-action-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  border: 1px solid;
+}
+
+.audit-action-badge--success {
+  background: rgba(63,185,80,0.12);
+  color: var(--risk-low);
+  border-color: rgba(63,185,80,0.3);
+}
+.audit-action-badge--info {
+  background: rgba(88,166,255,0.12);
+  color: var(--accent-blue);
+  border-color: rgba(88,166,255,0.3);
+}
+.audit-action-badge--warning {
+  background: rgba(210,153,34,0.12);
+  color: var(--risk-medium);
+  border-color: rgba(210,153,34,0.3);
+}
+.audit-action-badge--danger {
+  background: rgba(248,81,73,0.12);
+  color: var(--risk-critical);
+  border-color: rgba(248,81,73,0.3);
+}
+
+/* ── Legend ─────────────────────────────────────────────── */
+.audit-legend {
+  margin-top: 16px;
+  border-color: rgba(210,153,34,0.3);
+}
+
+/* ── Empty state ────────────────────────────────────────── */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-secondary); }
+.empty-state h3 { color: var(--text-primary); margin-bottom: 8px; font-size: 16px; }
