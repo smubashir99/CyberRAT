@@ -1,0 +1,270 @@
+/* CyberRAT — Crypto Demo Page Styles */
+
+/* ── Steps progress ─────────────────────────────────────── */
+.crypto-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.crypto-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.crypto-step--active {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: rgba(88,166,255,0.08);
+}
+
+.crypto-step--done {
+  border-color: var(--risk-low);
+  color: var(--risk-low);
+  background: rgba(63,185,80,0.08);
+}
+
+.crypto-step__num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.crypto-step--active .crypto-step__num {
+  background: var(--accent-blue);
+  color: #fff;
+  border-color: var(--accent-blue);
+}
+
+.crypto-step--done .crypto-step__num {
+  background: var(--risk-low);
+  color: #fff;
+  border-color: var(--risk-low);
+}
+
+/* ── Two-column layout ──────────────────────────────────── */
+.crypto-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .crypto-layout { grid-template-columns: 1fr; }
+}
+
+.crypto-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Individual panel ───────────────────────────────────── */
+.crypto-panel {
+  transition: opacity 0.2s;
+}
+.crypto-panel--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.crypto-panel__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crypto-panel__num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(88,166,255,0.15);
+  color: var(--accent-blue);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── PEM box ────────────────────────────────────────────── */
+.crypto-pem-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.crypto-pem-label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.crypto-pem-box pre {
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--risk-low);
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0;
+}
+
+/* ── Hint row ───────────────────────────────────────────── */
+.crypto-hint-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.crypto-hint-label {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.crypto-hint-row code {
+  color: var(--accent-blue);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+/* ── Encrypted output ───────────────────────────────────── */
+.crypto-encrypted-block {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crypto-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.crypto-field-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.crypto-field-row code {
+  font-size: 11px;
+  color: var(--accent-purple);
+  word-break: break-all;
+  font-family: monospace;
+}
+
+/* ── Decrypted output ───────────────────────────────────── */
+.crypto-decrypted-block {
+  background: rgba(63,185,80,0.06);
+  border: 1px solid rgba(63,185,80,0.2);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.crypto-decrypted-text {
+  font-size: 14px;
+  color: var(--risk-low);
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+/* ── Log panel ──────────────────────────────────────────── */
+.crypto-log-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.crypto-log {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.crypto-log__entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-family: monospace;
+}
+
+.crypto-log__entry--success { background: rgba(63,185,80,0.08);  color: var(--risk-low); }
+.crypto-log__entry--error   { background: rgba(248,81,73,0.08);  color: var(--risk-critical); }
+.crypto-log__entry--info    { background: rgba(88,166,255,0.08); color: var(--accent-blue); }
+
+.crypto-log__ts {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ── Algorithm info table ───────────────────────────────── */
+.crypto-algo-info {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.crypto-algo-info h4 {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.crypto-algo-info table { width: 100%; border-collapse: collapse; }
+.crypto-algo-info td {
+  font-size: 11px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--bg-secondary);
+  vertical-align: top;
+}
+.crypto-algo-info td:first-child { color: var(--text-muted); width: 50%; padding-right: 8px; }
+.crypto-algo-info td:last-child  { color: var(--text-primary); font-family: monospace; }
