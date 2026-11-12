@@ -1,5 +1,5 @@
 /**
- * CyberRAT v2 — Hypothetical SME Case Study Page
+ * CyberRAT — Hypothetical SME Case Study Page
  * Author: Syed Mubashir Ahmed Hashmi (20089221)
  *
  * ── Purpose ──────────────────────────────────────────────────
@@ -177,6 +177,7 @@ export default function CaseStudyPage() {
   const isRunning = (id) => !!running[id];
 
   // Run this case study assessment against the live prototype
+  //  Submits the answers to the backend and returns an assessment ID
   const runAssessment = async (caseStudy) => {
     setRunning((prev) => ({ ...prev, [caseStudy.id]: true }));
     try {
@@ -186,6 +187,7 @@ export default function CaseStudyPage() {
         company_size: "11–50",
         answers: caseStudy.answers,
       };
+      // Submit to backend and get assessment ID
       const res = await assessmentAPI.submit(payload);
       const id  = res.data.assessment?.id ?? res.data.assessment_id;
       setResults((prev) => ({ ...prev, [caseStudy.id]: id }));
@@ -206,7 +208,7 @@ export default function CaseStudyPage() {
     A002: CASE_ASSESSMENTS[1].answers[key],
     A003: CASE_ASSESSMENTS[2].answers[key],
   }));
-
+  // Render the page
   return (
     <div className="page">
       {/* ── Header ── */}
