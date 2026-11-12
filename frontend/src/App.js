@@ -1,5 +1,5 @@
 /**
- * CyberRAT — React Router + Protected Routes
+ * CyberRAT v2 — React Router + Protected Routes
  * Author: Syed Mubashir Ahmed Hashmi (20089221)
  *
  * Route structure:
@@ -13,7 +13,7 @@
  *   /benchmark     → BenchmarkPage — score vs Irish SME sector averages (auth required)
  *   /profile       → ProfilePage — update name and change password (auth required)
  *   /crypto-demo   → CryptoDemoPage (auth required)
- *   /case-study    → InsomniaCasePage — Café Bríd hypothetical case study A001/A002/A003 (auth required)
+ *   /case-study    → CaseStudyPage — Café Bríd hypothetical case study A001/A002/A003 (auth required)
  *   /admin/users   → AdminUsersPage (Admin only)
  *   /admin/audit   → AdminAuditPage (Admin only)
  */
@@ -34,7 +34,7 @@ import DashboardPage      from "./pages/DashboardPage";
 import AssessmentPage     from "./pages/AssessmentPage";
 import ResultsPage        from "./pages/ResultsPage";
 import CryptoDemoPage     from "./pages/CryptoDemoPage";
-import InsomniaCasePage   from "./pages/InsomniaCasePage";
+import CaseStudyPage   from "./pages/CaseStudyPage";
 import AdminUsersPage     from "./pages/AdminUsersPage";
 import AdminAuditPage     from "./pages/AdminAuditPage";
 import HistoryPage        from "./pages/HistoryPage";
@@ -46,7 +46,6 @@ import ProfilePage        from "./pages/ProfilePage";
 /* ────────────────────────────────────────────────────────────── */
 
 /** Redirect to /login if not authenticated */
-// If authenticated, render the Layout component with the child routes (Outlet).
 function RequireAuth() {
   const { user, loading } = useAuth();
   if (loading) {
@@ -66,7 +65,6 @@ function RequireAuth() {
 }
 
 /** Redirect to /dashboard if not admin */
-// If authenticated and admin, render the child routes (Outlet).
 function RequireAdmin() {
   const { user, isAdmin } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
@@ -75,7 +73,6 @@ function RequireAdmin() {
 }
 
 /** Redirect to /dashboard if not analyst or admin */
-// If authenticated and analyst or admin, render the child routes (Outlet).
 function RequireAnalyst() {
   const { user, isAnalyst } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
@@ -87,13 +84,9 @@ function RequireAnalyst() {
 /*  App                                                            */
 /* ────────────────────────────────────────────────────────────── */
 
-// Define the main application routes using React Router, including public routes (login, signup, forgot/reset password) 
-// and authenticated routes (dashboard, assessment, results, history, benchmark, profile, crypto demo, case study). 
-// Admin-only and analyst/admin routes are protected with guard components.
 function AppRoutes() {
   const { user } = useAuth();
-  // Render the routes using React Router's Routes and Route components, with appropriate guards for authentication and 
-  // role-based access control.
+
   return (
     <Routes>
       {/* ── Public ── */}
@@ -109,7 +102,6 @@ function AppRoutes() {
       <Route path="/reset-password"  element={<ResetPasswordPage />} />
 
       {/* ── Authenticated ── */}
-      {/* All routes below require authentication, enforced by the RequireAuth guard component.*/}
       <Route element={<RequireAuth />}>
         <Route path="/"           element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard"  element={<DashboardPage />} />
@@ -119,12 +111,9 @@ function AppRoutes() {
         <Route path="/benchmark"   element={<BenchmarkPage />} />
         <Route path="/profile"     element={<ProfilePage />} />
         <Route path="/crypto-demo"  element={<CryptoDemoPage />} />
-        <Route path="/case-study"   element={<InsomniaCasePage />} />
-      
-       { /* The assessment route is protected by the RequireAnalyst guard component, allowing access only to users with analyst
-         or admin roles.*/}
+        <Route path="/case-study"   element={<CaseStudyPage />} />
+
         {/* Analyst + Admin */}
-        
         <Route element={<RequireAnalyst />}>
           <Route path="/assessment" element={<AssessmentPage />} />
         </Route>

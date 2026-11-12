@@ -1,5 +1,5 @@
 /**
- * CyberRAT — Results Page
+ * CyberRAT v2 — Results Page
  * Author: Syed Mubashir Ahmed Hashmi (20089221)
  *
  * Two views:
@@ -40,7 +40,6 @@ const SECTOR_BENCHMARKS = {
 };
 
 // MTU/NCSC 2025 SME control adoption rates — all Irish sectors (n=894)
-// Used for control adoption bar chart on results page.
 const CONTROL_ADOPTION = [
   { control: "Automated Backup",    adoption: 26, criterion: "C1" },
   { control: "MFA",                 adoption: 39, criterion: "C2" },
@@ -56,7 +55,7 @@ const CONTROL_ADOPTION = [
 
 // Café Bríd hypothetical case study progression — from dataset Sheet 4
 // A003 = all 10 controls Yes(5) → weighted_sum=89 → 89/89×10 = 10.00
-const INSOMNIA_PROGRESSION = [
+const CASE_STUDY_PROGRESSION = [
   { stage: "A001 – Baseline",       score: 3.93,  label: "3.93",  fill: "#f85149" },
   { stage: "A002 – Partial Fix",    score: 6.07,  label: "6.07",  fill: "#d29922" },
   { stage: "A003 – Full Controls",  score: 10.00, label: "10.00", fill: "#3fb950" },
@@ -84,7 +83,7 @@ function ResultsList() {
   // Admin can edit/delete any; analyst can edit/delete their own only
   const canEdit   = (a) => isAdmin || a.user_id === user?.id;
   const canDelete = (a) => isAdmin || a.user_id === user?.id;
-// Load all assessments from the backend API and set the state. Handles loading state and errors.
+
   const loadAll = () => {
     setLoading(true);
     resultsAPI.getAll()
@@ -92,9 +91,9 @@ function ResultsList() {
       .catch(() => {})
       .finally(() => setLoading(false));
   };
-// useEffect hook to load all assessments when the component mounts.
+
   useEffect(loadAll, []);
-// Handle deletion of an assessment by calling the backend API, updating the state, and providing feedback to the user.
+
   const handleDelete = async (id) => {
     setConfirmDeleteId(null);
     try {
@@ -105,14 +104,14 @@ function ResultsList() {
       toast.error(e.response?.data?.message || "Failed to delete.");
     }
   };
-// Handle opening the inline edit form for an assessment by setting the editing ID and pre-filling the form with existing data.
+
   const openEdit = (a, e) => {
     e.preventDefault();
     e.stopPropagation();
     setEditingId(a.id);
     setEditForm({ company_name: a.company_name, sector: a.sector, company_size: a.company_size });
   };
-// Handle saving the edited assessment by calling the backend API, updating the state, and providing feedback to the user.
+
   const handleEditSave = async (id) => {
     setSaving(true);
     try {
@@ -128,9 +127,9 @@ function ResultsList() {
       setSaving(false);
     }
   };
-// If loading, display a loading spinner and message.
+
   if (loading) return <div className="page-loader"><div className="spinner" /> Loading results…</div>;
-// Render the results list page with a header, new assessment button, and either an empty state or a grid of result cards.
+
   return (
     <div className="page">
       <div className="page-header flex-between">
@@ -140,8 +139,6 @@ function ResultsList() {
         </div>
         <Link to="/assessment" className="btn btn-primary">+ New Assessment</Link>
       </div>
-  {/*If there are no assessments, display an empty state with a message and a button to start a new assessment.
-Otherwise, display a grid of result cards with details and actions.*/}
 
       {assessments.length === 0 ? (
         <div className="card">
@@ -346,7 +343,7 @@ function ResultDetail({ id }) {
       setPdfExporting(false);
     }
   };
-// If loading, display a loading spinner and message.
+
   if (loading) return <div className="page-loader"><div className="spinner" /> Loading result…</div>;
   if (error)   return <div className="page"><div className="card"><p style={{ color: "var(--accent-red)" }}>{error}</p></div></div>;
   if (!data?.assessment) return <div className="page"><div className="card"><p className="text-muted">No data found.</p></div></div>;
@@ -367,19 +364,19 @@ function ResultDetail({ id }) {
     domain: key.charAt(0).toUpperCase() + key.slice(1),
     score:  parseFloat(domainScores[key] ?? 0),
   }));
-// Prepare bar chart data for domain scores with colors based on the domain.
+
   const barData = domainKeys.map((key) => ({
     name:  key.charAt(0).toUpperCase() + key.slice(1),
     score: parseFloat(domainScores[key] ?? 0),
     fill:  DOMAIN_COLORS[key] || "#58a6ff",
   }));
-// Determine the risk class, sector benchmark, overall score, and differences from Irish average and sector benchmark for display.
+
   const riskClass = (scores.risk_level || "critical").toLowerCase();
   const sectorBenchmark = SECTOR_BENCHMARKS[assessment.sector] ?? 4.4;
   const overallScore = parseFloat(scores.overall ?? 0);
   const vsIrishAvg = overallScore - 4.4;   // vs Irish SME average (all sectors)
   const vsSector   = overallScore - sectorBenchmark;
-// Render the detailed result page with header, score hero, charts, recommendations, and admin actions.
+
   return (
     <div className="page">
       {/* Header */}
@@ -582,7 +579,7 @@ function ResultDetail({ id }) {
               A001 = baseline (same as Irish Retail avg 4.4). A003 = full controls applied.
             </p>
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={INSOMNIA_PROGRESSION} barSize={48}>
+              <BarChart data={CASE_STUDY_PROGRESSION} barSize={48}>
                 <XAxis dataKey="stage" tick={{ fill: "#8b949e", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 10]} tick={{ fill: "#6e7681", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <ReferenceLine y={overallScore} stroke="#58a6ff" strokeDasharray="4 2"
@@ -593,20 +590,20 @@ function ResultDetail({ id }) {
                   cursor={{ fill: "rgba(255,255,255,0.04)" }}
                 />
                 <Bar dataKey="score" radius={[4,4,0,0]}>
-                  {INSOMNIA_PROGRESSION.map((e) => <Cell key={e.stage} fill={e.fill} />)}
+                  {CASE_STUDY_PROGRESSION.map((e) => <Cell key={e.stage} fill={e.fill} />)}
                   <LabelList dataKey="label" position="top" style={{ fill: "#e6edf3", fontSize: 12, fontWeight: "bold" }} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
 
-            <div className="insomnia-legend">
-              <div className="insomnia-legend-item">
+            <div className="case-study-legend">
+              <div className="case-study-legend-item">
                 <span className="dot dot--red" /> A001 Baseline (3.93): 4 controls in place
               </div>
-              <div className="insomnia-legend-item">
+              <div className="case-study-legend-item">
                 <span className="dot dot--yellow" /> A002 Partial (6.07): Added MFA + Training
               </div>
-              <div className="insomnia-legend-item">
+              <div className="case-study-legend-item">
                 <span className="dot dot--green" /> A003 Full (10.00): All 10 controls active
               </div>
             </div>

@@ -1,4 +1,4 @@
-/* CyberRAT — Results Page Styles */
+/* CyberRAT v2 — Results Page Styles */
 
 /* Shared with Dashboard */
 .flex-between { display: flex; align-items: center; justify-content: space-between; }
@@ -230,15 +230,15 @@
 
 .mt-12 { margin-top: 12px; }
 
-/* ── Insomnia Café legend ────────────────────────────── */
-.insomnia-legend {
+/* ── Café Bríd case study legend ────────────────────────────── */
+.case-study-legend {
   display: flex;
   flex-direction: column;
   gap: 4px;
   margin-top: 10px;
 }
 
-.insomnia-legend-item {
+.case-study-legend-item {
   display: flex;
   align-items: center;
   gap: 8px;

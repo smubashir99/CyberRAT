@@ -1,5 +1,5 @@
 /**
- * CyberRAT — Hypothetical SME Case Study Page
+ * CyberRAT v2 — Hypothetical SME Case Study Page
  * Author: Syed Mubashir Ahmed Hashmi (20089221)
  *
  * ── Purpose ──────────────────────────────────────────────────
@@ -32,7 +32,7 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import { assessmentAPI } from "../services/api";
-import "./InsomniaCasePage.css";
+import "./CaseStudyPage.css";
 
 /* ────────────────────────────────────────────────────────────────
    HYPOTHETICAL SME CASE STUDY DATA — "Café Bríd"
@@ -166,7 +166,7 @@ const CRITERION_LABELS = {
 
 /* ────────────────────────────────────────────────────────────── */
 
-export default function InsomniaCasePage() {
+export default function CaseStudyPage() {
   const navigate  = useNavigate();
   const [active,   setActive]   = useState(0);   // 0=A001, 1=A002, 2=A003
   const [running,  setRunning]  = useState({});  // { "A001": true/false, ... }
