@@ -186,14 +186,15 @@ export default function LoginPage() {
           <span className="login-badge">🪙 JWT</span>
           <span className="login-badge">📧 OTP 2FA</span>
         </div>
-         // Step 1: Credentials form
+         {/*  Step 1: Credentials form */}
         {/* ── Step 1: Credentials ── */}
         {step === "credentials" && (
           <form onSubmit={handleCredentials} noValidate>
             {error && <div className="login-error"><span>⚠</span> {error}</div>}
 
             <div className="login-step-label">Step 1 of 2 — Sign In</div>
-            // Email input field
+           
+            {/* Email input field */}
             <div className="form-group">
               <label className="form-label">Email Address</label>
               <input
@@ -206,7 +207,7 @@ export default function LoginPage() {
                 autoFocus
               />
             </div>
-            // Password input field with a link to the forgot password page
+            {/* Password input field with a link to the forgot password page */}
             <div className="form-group">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <label className="form-label" style={{ marginBottom: 0 }}>Password</label>
@@ -238,11 +239,10 @@ export default function LoginPage() {
             </button>
           </form>
         )}
-        // Step 2: OTP verification form
+        {/* Step 2: OTP verification form */}
         {/* ── Step 2: OTP ── */}
         {step === "otp" && (
-          // Form for entering the OTP code sent to the user's email. It includes input fields for each digit of the OTP,
-          //  error handling, and navigation back to the previous step.
+      
           <form onSubmit={handleOtp} noValidate>
             {error && <div className="login-error"><span>⚠</span> {error}</div>}
 
@@ -251,7 +251,8 @@ export default function LoginPage() {
             <p className="login-otp-hint">
               Enter the 6-digit code sent to <strong>{email}</strong>
             </p>
-            // Show the OTP in dev mode for testing purposes
+            
+            {/* Show the OTP in dev mode for testing purposes*/}
             {/* Dev mode notice */}
             {debugOtp && (
               <div className="login-debug-otp">
@@ -263,8 +264,9 @@ export default function LoginPage() {
             )}
             
             {/* OTP boxes */}
-            // Input fields for each digit of the OTP code. Users can paste the entire OTP, and the input will automatically 
-            fill the boxes.
+          
+            {/*Input fields for each digit of the OTP code. Users can paste the entire OTP, and the input will automatically 
+            fill the boxes. */}
             <div className="otp-boxes" onPaste={handleOtpPaste}>
               {otp.map((digit, idx) => (
                 <input
@@ -285,15 +287,17 @@ export default function LoginPage() {
               type="submit"
               className="btn btn-primary btn-full btn-lg"
               disabled={loading || otp.join("").length < 6}
-            > // Submit button for verifying the OTP code. It shows a loading spinner when the verification is in progress 
-                 and is disabled until all six digits are entered.
+            >
+        {/* Submit button for verifying the OTP code. It shows a loading spinner when the verification is in progress 
+                 and is disabled until all six digits are entered. */}
               {loading ? (
                 <><div className="spinner" style={{ width: 16, height: 16 }} /> Verifying…</>
               ) : (
                 "Verify & Sign In"
               )}
             </button>
-            // Back button to return to the previous step (credentials entry). It resets the OTP fields and any debug information.
+            {/* Back button to return to the previous step (credentials entry). It resets the OTP fields and any debug information. */}
+            
             <button
               type="button"
               className="btn btn-ghost btn-full"
@@ -304,8 +308,8 @@ export default function LoginPage() {
             </button>
           </form>
         )}
-        // Demo credentials for quick testing in development mode. Clicking on a demo credential fills the email 
-           and password fields.
+      {/* Demo credentials for quick testing in development mode. Clicking on a demo credential fills the email 
+           and password fields.*/}
         {/* ── Demo credentials (step 1 only) ── */}
         {step === "credentials" && (
           <div className="login-card__demo">
