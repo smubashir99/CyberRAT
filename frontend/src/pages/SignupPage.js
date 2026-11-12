@@ -107,8 +107,9 @@ export default function SignupPage() {
             CyberRAT — Cybersecurity Risk Assessment Framework
           </p>
         </div>
-        // Signup form with input fields for user details, password rules, and submission button. 
-        //Displays error messages and validation feedback.
+    
+        {/* Signup form with input fields for user details, password rules, and submission button. 
+        Displays error messages and validation feedback.*/}
         <form onSubmit={handleSubmit} noValidate>
           {error && (
             <div className="login-error">
